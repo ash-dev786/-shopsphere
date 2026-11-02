@@ -10,4 +10,5 @@ function Button({ text, onClick, type = "button" }) {
         </button>
     );
 }
+
 export default Button;

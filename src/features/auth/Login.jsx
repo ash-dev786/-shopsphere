@@ -2,10 +2,36 @@ import logo from '@/assets/logos/logo.png';
 import lock from '@/assets/icons/lock.png';
 import Textfield from '@/components/Textfield';
 import Button from '@/components/Button';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import userAuthStore from '@/store/authStore';
+
 function Login() {
- const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const loginUser = userAuthStore((state) => state.loginUser);
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
+        if (!email || !password) {
+            return alert("Please enter email and password");
+        }
+
+        const result = await loginUser(email, password);
+
+        if (result.success) {
+            alert("Login Successful!");
+            if (result.role === 'vendor') {
+                navigate('/vendordashboard');
+            } else {
+                navigate('/dashboard');
+            }
+        } else {
+            alert(result.message);
+        }
+    };
 
     return (
         <div className="relative flex min-h-screen w-full flex-col items-center py-[20px] md:py-[45px] px-[20px] md:px-[45px]">
@@ -46,17 +72,21 @@ function Login() {
                         Log in to your ShopSphere & client account
                     </p>
 
-                    <div className="flex flex-col items-center gap-[18px] md:gap-[20px] w-full mt-[20px] md:mt-[24px]">
+                    <form onSubmit={handleLogin} className="flex flex-col items-center gap-[18px] md:gap-[20px] w-full mt-[20px] md:mt-[24px]">
                         <Textfield
                             label="Email Address"
                             type="email"
                             placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
 
                         <Textfield
                             label="Password"
                             type="password"
                             placeholder="Enter your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
 
                         <div className="flex justify-start w-full">
@@ -68,16 +98,16 @@ function Login() {
                                 Remember this device
                             </label>
                         </div>
-                    </div>
+
+                        <div className="h-[10px] md:h-[14px] w-full"></div>
+
+                        <Button text={"Login"} type="submit" />
+                    </form>
                 </div>
-
-                <div className="h-[20px] md:h-[24px]"></div>
-
-                <Button text={"Login"} onClick={() => navigate('/dashboard')} />
 
                 <div className="mt-[22px] w-full h-[1px] bg-gray-200"></div>
 
-                <div className=" mt-[14px] flex justify-center items-center gap-[4px] text-[12px] md:text-[14px]">
+                <div className="mt-[14px] flex justify-center items-center gap-[4px] text-[12px] md:text-[14px]">
                     <span className="text-[#64748B]">
                         Don't have an account?
                     </span>

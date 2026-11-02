@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Mail, LockKeyhole, User, Store, Eye, EyeOff, Phone, MapPin, Map, Tag, Boxes, DollarSign, Package } from 'lucide-react';
 
-function Textfield({ label, type, placeholder, required = true, value }) {
+function Textfield({ label, type, placeholder, required = true, value, onChange }) {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
@@ -39,7 +39,8 @@ function Textfield({ label, type, placeholder, required = true, value }) {
                     type={type === 'password' && showPassword ? 'text' : type === 'password' ? 'password' : 'text'}
                     placeholder={placeholder}
                     required={required}
-                    defaultValue={value}
+                    value={value !== undefined ? value : ''}
+                    onChange={onChange}
                     className="w-full h-full bg-transparent outline-none text-[13px] md:text-[14px] text-gray-800 placeholder:text-gray-400"
                 />
 

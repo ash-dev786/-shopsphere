@@ -1,14 +1,48 @@
 import logo from '@/assets/logos/logo.png';
 import Textfield from '@/components/Textfield';
 import Button from '@/components/Button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Store, CheckCircle, Info } from 'lucide-react';
+import userAuthStore from '@/store/authStore';
 
 function Signup() {
+    const signupUser = userAuthStore((state) => state.signupUser);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
+    const [shopname, setShopname] = useState('');
     const [accountType, setAccountType] = useState('vendor');
     const navigate = useNavigate();
+
+    const handleSignup = async (e) => {
+        e.preventDefault();
+
+        if (!name || !email || !phone || !password || (accountType === 'vendor' && !shopname)) {
+            alert("Please fill all required fields!");
+            return;
+        }
+
+        const userData = {
+            name,
+            email,
+            phone,
+            password,
+            role: accountType,
+            shopname: accountType === 'vendor' ? shopname : ""
+        };
+
+        const result = await signupUser(userData);
+
+        if (result.success) {
+            alert("Account created successfully!");
+            navigate('/');
+        } else {
+            alert(result.message);
+        }
+    };
+
     return (
         <div className="relative flex min-h-screen w-full flex-col items-center py-[20px] md:py-[45px] px-[16px] md:px-[45px]">
             <div className="absolute top-[20px] left-[16px] md:top-[45px] md:left-[45px] flex justify-start">
@@ -117,47 +151,57 @@ function Signup() {
                         </div>
                     </div>
 
-                    <div className='flex w-full items-center flex-col gap-[18px] md:gap-[24px] mt-[20px]'>
+                    <form onSubmit={handleSignup} className='flex w-full items-center flex-col gap-[18px] md:gap-[24px] mt-[20px]'>
                         <Textfield
                             label="Full Name"
                             type="name"
                             placeholder="Enter your name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                         />
+
                         <Textfield
                             label="Email Address"
                             type="email"
                             placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
+
                         <Textfield
                             label="Phone Number"
                             type="phone"
                             placeholder="Enter your phone number"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
                         />
+
                         <Textfield
                             label="Password"
                             type="password"
                             placeholder="Enter your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
+
                         {accountType === 'vendor' && (
                             <Textfield
                                 label="Shop Name"
                                 type="shopname"
                                 placeholder="shop name"
+                                value={shopname}
+                                onChange={(e) => setShopname(e.target.value)}
                             />
                         )}
 
+                        <div className="h-[6px] md:h-[11px] w-full"></div>
 
-                    </div>
-
-                    <div className="h-[30px] md:h-[35px]"></div>
-
-                    <Button text={"Create Account"} onClick={() => navigate('/vendordashboard')} />
+                        <Button text={"Create Account"} type="submit" />
+                    </form>
 
                     <div className="mt-[22px] w-full h-[1px] bg-gray-200"></div>
 
-                    <div className=" mt-[14px] flex justify-center items-center gap-[4px] text-[12px] md:text-[14px] 
-                    mb-[8px]
-                    ">
+                    <div className="mt-[14px] flex justify-center items-center gap-[4px] text-[12px] md:text-[14px] mb-[8px]">
                         <span className="text-[#64748B]">
                             already have an account?
                         </span>
@@ -169,8 +213,6 @@ function Signup() {
                             Sign in
                         </Link>
                     </div>
-
-
                 </div>
             </div>
         </div>
