@@ -1,11 +1,9 @@
-import ProductCard from '../../components/ProductCard';
-
-import electronicImg from '../../assets/images/electronic.png';
-import perfumeImg from '../../assets/images/perfume.png';
-import pordsImg from '../../assets/images/pords.png';
-import shirtImg from '../../assets/images/shirt.png';
-import watchImg from '../../assets/images/watch.png';
-
+import ProductCard from '@/components/ProductCard';
+import electronicImg from '@/assets/images/electronic.png';
+import perfumeImg from '@/assets/images/perfume.png';
+import pordsImg from '@/assets/images/pords.png';
+import shirtImg from '@/assets/images/shirt.png';
+import watchImg from '@/assets/images/watch.png';
 function ProductList() {
     const productsList1 = [
         {
@@ -94,7 +92,7 @@ function ProductList() {
                     </h2>
                 </div>
 
-                  
+
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[14px] md:gap-[18px]
                 mt-[10px] md:mt-[16px]

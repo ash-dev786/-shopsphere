@@ -1,7 +1,7 @@
-import logo from '../../assets/logos/logo.png';
-import lock from '../../assets/icons/lock.png';
-import Textfield from '../../components/Textfield';
-import Button from '../../components/Button';
+import logo from '@/assets/logos/logo.png';
+import lock from '@/assets/icons/lock.png';
+import Textfield from '@/components/Textfield';
+import Button from '@/components/Button';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 function Login() {

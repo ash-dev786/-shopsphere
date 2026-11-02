@@ -1,7 +1,8 @@
-import { Search, Sparkles, User, ShoppingBag } from 'lucide-react';
+import { Search, ShoppingCart } from 'lucide-react';
 import logo from '../assets/logos/logo.png';
-
+import { useNavigate } from 'react-router-dom';
 function Header() {
+    const navigate = useNavigate();
     return (
         <header className="w-full bg-white border-b border-gray-100 shadow-md py-[22px] px-[16px] md:px-[40px]">
             <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-[16px]">
@@ -33,10 +34,13 @@ function Header() {
                     </div>
                 </div>
                 <div className="flex items-center gap-[12px] shrink-0">
-                    <div className="flex items-center justify-center h-[38px] w-[38px] md:h-[42px] md:w-[42px] rounded-full bg-gradient-to-r from-[#413EDC] to-[#3FE1FD] text-white shadow-md cursor-pointer hover:opacity-90 transition-all">
-                        <ShoppingBag size={18} />
-                    </div>
-                </div>
+            <div 
+                onClick={() => navigate('/myorders')}
+                className="flex items-center justify-center h-[38px] w-[38px] md:h-[42px] md:w-[42px] rounded-full bg-transparent border-2 border-[#413EDC]/30 text-[#413EDC] shadow-sm cursor-pointer hover:border-[#413EDC] hover:bg-[#EEF2FF]/50 transition-all"
+            >
+                <ShoppingCart size={18} />
+            </div>
+        </div>
 
             </div>
         </header>

@@ -1,13 +1,14 @@
-import logo from '../../assets/logos/logo.png';
-import Textfield from '../../components/Textfield';
-import Button from '../../components/Button';
+import logo from '@/assets/logos/logo.png';
+import Textfield from '@/components/Textfield';
+import Button from '@/components/Button';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Store, CheckCircle, Info } from 'lucide-react';
 
 function Signup() {
     const [accountType, setAccountType] = useState('vendor');
-
+    const navigate = useNavigate();
     return (
         <div className="relative flex min-h-screen w-full flex-col items-center py-[20px] md:py-[45px] px-[16px] md:px-[45px]">
             <div className="absolute top-[20px] left-[16px] md:top-[45px] md:left-[45px] flex justify-start">
@@ -127,7 +128,11 @@ function Signup() {
                             type="email"
                             placeholder="Enter your email"
                         />
-
+                        <Textfield
+                            label="Phone Number"
+                            type="phone"
+                            placeholder="Enter your phone number"
+                        />
                         <Textfield
                             label="Password"
                             type="password"
@@ -146,7 +151,7 @@ function Signup() {
 
                     <div className="h-[30px] md:h-[35px]"></div>
 
-                    <Button text={"Create Account"} />
+                    <Button text={"Create Account"} onClick={() => navigate('/vendordashboard')} />
 
                     <div className="mt-[22px] w-full h-[1px] bg-gray-200"></div>
 

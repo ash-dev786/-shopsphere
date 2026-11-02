@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Mail, LockKeyhole, User, Store, Eye, EyeOff } from 'lucide-react';
+import { Mail, LockKeyhole, User, Store, Eye, EyeOff, Phone, MapPin, Map, Tag, Boxes, DollarSign, Package } from 'lucide-react';
 
-function Textfield({ label, type, placeholder, required = true }) {
+function Textfield({ label, type, placeholder, required = true, value }) {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
@@ -15,8 +15,22 @@ function Textfield({ label, type, placeholder, required = true }) {
                     <Mail size={18} className="text-gray-400 shrink-0" />
                 ) : type === 'name' ? (
                     <User size={18} className="text-gray-400 shrink-0" />
+                ) : type === 'productName' ? (
+                    <Package size={18} className="text-gray-400 shrink-0" />
                 ) : type === 'shopname' ? (
                     <Store size={18} className="text-gray-400 shrink-0" />
+                ) : type === 'phone' ? (
+                    <Phone size={18} className="text-gray-400 shrink-0" />
+                ) : type === 'city' ? (
+                    <MapPin size={18} className="text-gray-400 shrink-0" />
+                ) : type === 'address' ? (
+                    <Map size={18} className="text-gray-400 shrink-0" />
+                ) : type === 'price' ? (
+                    <DollarSign size={18} className="text-gray-400 shrink-0" />
+                ) : type === 'category' ? (
+                    <Tag size={18} className="text-gray-400 shrink-0" />
+                ) : type === 'stock' ? (
+                    <Boxes size={18} className="text-gray-400 shrink-0" />
                 ) : (
                     <LockKeyhole size={18} className="text-gray-400 shrink-0" />
                 )}
@@ -25,6 +39,7 @@ function Textfield({ label, type, placeholder, required = true }) {
                     type={type === 'password' && showPassword ? 'text' : type === 'password' ? 'password' : 'text'}
                     placeholder={placeholder}
                     required={required}
+                    defaultValue={value}
                     className="w-full h-full bg-transparent outline-none text-[13px] md:text-[14px] text-gray-800 placeholder:text-gray-400"
                 />
 

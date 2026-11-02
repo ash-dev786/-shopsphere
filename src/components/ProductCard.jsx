@@ -1,8 +1,20 @@
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, CheckCircle2 } from 'lucide-react';
 
 function ProductCard({ category, image, vendor, title, tag, price }) {
+    const navigate = useNavigate();
+
+    const handleCardClick = () => {
+        navigate('/productdetail', {
+            state: { category, image, vendor, title, tag, price }
+        });
+    };
+
     return (
-        <div className="bg-white rounded-[20px] border border-gray-100 p-[12px] md:p-[16px] shadow-sm flex flex-col justify-between w-full">
+        <div 
+            onClick={handleCardClick}
+            className="bg-white rounded-[20px] border border-gray-100 p-[12px] md:p-[16px] shadow-sm hover:shadow-md transition-all flex flex-col justify-between w-full cursor-pointer"
+        >
             <div>
                 <div className="relative w-full h-[150px] sm:h-[170px] md:h-[190px] rounded-[16px] overflow-hidden flex items-center justify-center p-[4px]">
                     {category && (
@@ -39,7 +51,13 @@ function ProductCard({ category, image, vendor, title, tag, price }) {
                     </span>
                 </div>
 
-                <button className="flex items-center gap-[6px] bg-[#413EDC] hover:bg-[#3633b8] text-white text-[11px] md:text-[12px] font-[600] px-[12px] py-[8px] rounded-[12px] shadow-sm transition-all cursor-pointer shrink-0">
+                <button 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleCardClick();
+                    }}
+                    className="flex items-center gap-[6px] bg-[#413EDC] hover:bg-[#3633b8] text-white text-[11px] md:text-[12px] font-[600] px-[12px] py-[8px] rounded-[12px] shadow-sm transition-all cursor-pointer shrink-0"
+                >
                     <ShoppingCart size={14} />
                     <span>Add to Cart</span>
                 </button>
