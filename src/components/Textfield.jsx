@@ -39,7 +39,7 @@ function Textfield({ label, type, placeholder, required = true, value, onChange 
                     type={type === 'password' && showPassword ? 'text' : type === 'password' ? 'password' : 'text'}
                     placeholder={placeholder}
                     required={required}
-                    value={value !== undefined ? value : ''}
+                    value={value}
                     onChange={onChange}
                     className="w-full h-full bg-transparent outline-none text-[13px] md:text-[14px] text-gray-800 placeholder:text-gray-400"
                 />

@@ -1,12 +1,22 @@
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, CheckCircle2 } from 'lucide-react';
 
-function ProductCard({ category, image, vendor, title, tag, price }) {
+function ProductCard({ id, category, image, vendor, title, tag, price, description, stock }) {
     const navigate = useNavigate();
 
     const handleCardClick = () => {
         navigate('/productdetail', {
-            state: { category, image, vendor, title, tag, price }
+            state: { 
+                id, 
+                category, 
+                image, 
+                vendor, 
+                title, 
+                tag, 
+                price,
+                description, 
+                stock 
+            }
         });
     };
 

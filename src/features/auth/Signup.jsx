@@ -37,7 +37,7 @@ function Signup() {
 
         if (result.success) {
             alert("Account created successfully!");
-            navigate('/');
+            navigate('/vendordashboard');
         } else {
             alert(result.message);
         }

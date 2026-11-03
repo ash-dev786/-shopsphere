@@ -1,8 +1,29 @@
+import { useState, useEffect } from 'react';
 import { Search, ShoppingCart } from 'lucide-react';
 import logo from '../assets/logos/logo.png';
 import { useNavigate } from 'react-router-dom';
+import userProductStore from '@/store/userProductStore';
+
 function Header() {
     const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState('');
+    const { fetchProducts } = userProductStore();
+   
+        useEffect(() => {
+        if (searchTerm === '') {
+            fetchProducts(1, 'all', '');
+        }
+    }, [searchTerm, fetchProducts]);
+
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        fetchProducts(1, 'all', searchTerm);
+        if (window.location.pathname !== '/dashboard') {
+            navigate('/dashboard');
+        }
+    };
+
     return (
         <header className="w-full bg-white border-b border-gray-100 shadow-md py-[22px] px-[16px] md:px-[40px]">
             <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-[16px]">
@@ -20,28 +41,30 @@ function Header() {
                         <h1 className="text-black font-[700] italic text-[14px] md:text-[15px]">
                             ShopSphere
                         </h1>
-                    
                     </div>
                 </div>
-                <div className="flex-1 max-w-[500px] mx-[16px]">
+                
+                <form onSubmit={handleSearch} className="flex-1 max-w-[500px] mx-[16px]">
                     <div className="flex items-center w-full h-[38px] md:h-[42px] px-[14px] bg-gray-50 border border-gray-200 rounded-[14px] shadow-sm focus-within:bg-white transition-all gap-[10px]">
                         <Search size={18} className="text-gray-400 shrink-0" />
                         <input
                             type="text"
-                            placeholder="Search products, vendors, or categories..."
+                            placeholder="Search products, categories..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full h-full bg-transparent outline-none text-[13px] md:text-[14px] text-gray-800 placeholder:text-gray-400"
                         />
                     </div>
-                </div>
-                <div className="flex items-center gap-[12px] shrink-0">
-            <div 
-                onClick={() => navigate('/myorders')}
-                className="flex items-center justify-center h-[38px] w-[38px] md:h-[42px] md:w-[42px] rounded-full bg-transparent border-2 border-[#413EDC]/30 text-[#413EDC] shadow-sm cursor-pointer hover:border-[#413EDC] hover:bg-[#EEF2FF]/50 transition-all"
-            >
-                <ShoppingCart size={18} />
-            </div>
-        </div>
+                </form>
 
+                <div className="flex items-center gap-[12px] shrink-0">
+                    <div 
+                        onClick={() => navigate('/myorders')}
+                        className="flex items-center justify-center h-[38px] w-[38px] md:h-[42px] md:w-[42px] rounded-full bg-transparent border-2 border-[#413EDC]/30 text-[#413EDC] shadow-sm cursor-pointer hover:border-[#413EDC] hover:bg-[#EEF2FF]/50 transition-all"
+                    >
+                        <ShoppingCart size={18} />
+                    </div>
+                </div>
             </div>
         </header>
     );

@@ -9,23 +9,54 @@ function ProductDetail() {
     const navigate = useNavigate();
     const [quantity, setQuantity] = useState(1);
 
-    const product = location.state || {
-        category: 'ELECTRONICS',
-        title: 'Audionic Airbud 550 TWS Wireless Earbuds',
-        vendor: 'SoundHub Clifton',
-        price: 'Rs 4,200',
-        tag: 'Official Retail',
-        image: null
+    const product = location.state;
+    const priceString = product ? product.price : "Rs 0";
+    const numericPrice = Number(priceString.replace(/[^0-9]/g, '')) || 0;
+    const totalPrice = numericPrice * quantity;
+
+
+    if (!product) {
+        return (
+            <div className="flex flex-col w-full min-h-screen bg-gray-50">
+                <Header />
+                <div className="flex-1 flex items-center justify-center p-[20px]">
+                    <div className="text-center flex flex-col items-center gap-[16px]">
+                        <h2 className="text-[20px] font-[700] text-gray-900">Product not found</h2>
+                        <button onClick={() => navigate('/dashboard')} className="bg-[#413EDC] text-white px-[20px] py-[10px] rounded-[12px] text-[13px] font-[600] cursor-pointer">
+                            Back to Dashboard
+                        </button>
+                    </div>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
+    const increaseQty = () => {
+        setQuantity(quantity + 1);
+
     };
 
-    const handleQuantity = (type) => {
-        if (type === 'dec' && quantity > 1) setQuantity(prev => prev - 1);
-        if (type === 'inc') setQuantity(prev => prev + 1);
+    const decreaseQty = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+
+        }
     };
 
     const handleAddToCart = () => {
-        // Yahan aap item ko cart state ya backend mein bhej sakte hain
-        // Filhal direct cart page par navigate kar rahe hain
+        const cartItem = {
+            id: product.id,
+            title: product.title,
+            price: product.price,
+            image: product.image,
+            vendor: product.vendor,
+            quantity: quantity
+        };
+
+        const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
+        localStorage.setItem('cart', JSON.stringify([...existingCart, cartItem]));
+
         navigate('/cart');
     };
 
@@ -33,7 +64,7 @@ function ProductDetail() {
         <div className="flex flex-col w-full min-h-screen bg-gray-50">
             <Header />
 
-            <main className="flex-1 w-full max-w-[1280px] mx-auto px-[26px] md:px-[40px] py-[24px] md:py-[40px]">
+            <main className="flex-1 w-full max-w-[1280px] mx-auto px-[26px] md:px-[40px] py-[24px] md:py-[40px] ">
                 <button
                     onClick={() => navigate('/dashboard')}
                     className="flex items-center gap-[6px] text-gray-600 hover:text-[#413EDC] text-[13px] md:text-[14px] font-[600] mb-[24px] cursor-pointer transition-colors w-fit"
@@ -60,7 +91,7 @@ function ProductDetail() {
                     <div className="flex flex-col gap-[20px] w-full">
                         <div className="flex flex-col gap-[8px]">
                             <span className="text-[#413EDC] text-[11px] md:text-[12px] font-[800] tracking-wider uppercase">
-                                {product.category || 'CATEGORY'}
+                                {product.category}
                             </span>
 
                             <h1 className="text-[22px] md:text-[30px] lg:text-[34px] font-[800] text-gray-900 leading-[1.2]">
@@ -69,18 +100,19 @@ function ProductDetail() {
 
                             <div className="flex items-center gap-[6px] text-gray-600 text-[13px] md:text-[14px] font-[500] mt-[2px]">
                                 <Store size={16} className="text-[#413EDC] shrink-0" />
-                                <span>Sold by <strong className="text-gray-900 font-[700]">{product.vendor || 'Official Store'}</strong></span>
+                                <span>Sold by <strong className="text-gray-900 font-[700]">{product.vendor}</strong></span>
                             </div>
                         </div>
 
                         <div className="text-[26px] md:text-[32px] font-[800] text-[#413EDC]">
-                            {product.price}
+                            Rs {totalPrice.toLocaleString()}
                         </div>
 
                         <div className="flex flex-wrap items-center gap-[16px] pt-[8px]">
                             <div className="flex items-center bg-gray-100 border border-gray-200 rounded-[14px] p-[4px]">
                                 <button
-                                    onClick={() => handleQuantity('dec')}
+                                    onClick={decreaseQty}
+                                    type="button"
                                     className="w-[36px] h-[36px] flex items-center justify-center rounded-[10px] bg-white text-gray-700 shadow-xs hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
                                 >
                                     <Minus size={16} />
@@ -89,7 +121,8 @@ function ProductDetail() {
                                     {quantity}
                                 </span>
                                 <button
-                                    onClick={() => handleQuantity('inc')}
+                                    onClick={increaseQty}
+                                    type="button"
                                     className="w-[36px] h-[36px] flex items-center justify-center rounded-[10px] bg-white text-gray-700 shadow-xs hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
                                 >
                                     <Plus size={16} />
@@ -110,7 +143,7 @@ function ProductDetail() {
                                 Description
                             </h3>
                             <p className="text-[13px] md:text-[14px] text-gray-600 leading-[1.6]">
-                                Premium quality {product.title} sourced directly from verified vendors. Built for durability, seamless performance, and exceptional daily user experience.
+                                {product.description || "No description available."}
                             </p>
                         </div>
 

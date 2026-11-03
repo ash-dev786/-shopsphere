@@ -3,18 +3,15 @@ import { loginApi, signupApi } from '@/features/auth/authService';
 
 const userAuthStore = create((set) => ({
     user: JSON.parse(localStorage.getItem('user')) || null,
-    token: localStorage.getItem('token') || null,
 
     loginUser: async (email, password) => {
         try {
             const data = await loginApi(email, password);
 
-            if (data.token) {
-                localStorage.setItem('token', data.token);
+            if (data.role) {
                 localStorage.setItem('user', JSON.stringify({ name: data.name, role: data.role }));
                 
                 set({ 
-                    token: data.token, 
                     user: { name: data.name, role: data.role } 
                 });
                 
@@ -41,9 +38,8 @@ const userAuthStore = create((set) => ({
     },
 
     logout: () => {
-        localStorage.removeItem('token');
         localStorage.removeItem('user');
-        set({ user: null, token: null });
+        set({ user: null });
     }
 }));
 

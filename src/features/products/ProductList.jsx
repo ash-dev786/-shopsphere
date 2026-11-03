@@ -1,87 +1,27 @@
+import { useEffect } from 'react';
 import ProductCard from '@/components/ProductCard';
-import electronicImg from '@/assets/images/electronic.png';
-import perfumeImg from '@/assets/images/perfume.png';
-import pordsImg from '@/assets/images/pords.png';
-import shirtImg from '@/assets/images/shirt.png';
-import watchImg from '@/assets/images/watch.png';
-function ProductList() {
-    const productsList1 = [
-        {
-            id: 1,
-            category: 'Tech Gadget',
-            image: pordsImg,
-            vendor: 'SoundHub Clifton',
-            title: 'Audionic Airbud 550 TWS Wireless Earbuds',
-            tag: 'Official Retail',
-            price: 'Rs 4,200',
-        },
-        {
-            id: 2,
-            category: 'Handmade',
-            image: shirtImg,
-            vendor: 'Gulberg Threads',
-            title: 'Royal Khaadi Embroidered Kurta - Mint Green',
-            tag: 'Pure Cotton',
-            price: 'Rs 3,850',
-        },
-        {
-            id: 3,
-            category: 'Wearable',
-            image: watchImg,
-            vendor: 'TimeCraft Studio',
-            title: 'Luxury Chronograph Leather Strap Watch',
-            tag: 'Water Resistant',
-            price: 'Rs 8,500',
-        },
-        {
-            id: 4,
-            category: 'Luxury Scent',
-            image: perfumeImg,
-            vendor: 'J. Fragrances',
-            title: 'Oud Al Amir Premium Eau De Parfum',
-            tag: 'Long Lasting',
-            price: 'Rs 6,200',
-        },
-    ];
+import userProductStore from '@/store/userProductStore';
 
-    const productsList2 = [
-        {
-            id: 5,
-            category: 'Electronics',
-            image: electronicImg,
-            vendor: 'TechZone Saddar',
-            title: 'Smart AI Noise Cancelling Headset Pro',
-            tag: 'Wireless Bluetooth',
-            price: 'Rs 12,999',
-        },
-        {
-            id: 6,
-            category: 'Tech Gadget',
-            image: pordsImg,
-            vendor: 'SoundHub Clifton',
-            title: 'Audionic Airbud Pro Gaming Edition',
-            tag: 'Low Latency',
-            price: 'Rs 5,100',
-        },
-        {
-            id: 7,
-            category: 'Fashion',
-            image: shirtImg,
-            vendor: 'Gulberg Threads',
-            title: 'Casual Slim Fit Cotton Linen Shirt',
-            tag: 'Breathable Fabric',
-            price: 'Rs 2,990',
-        },
-        {
-            id: 8,
-            category: 'Luxury Scent',
-            image: perfumeImg,
-            vendor: 'J. Fragrances',
-            title: 'Royal Amber EDP Cologne 100ml',
-            tag: 'Original Collection',
-            price: 'Rs 7,400',
-        },
-    ];
+function ProductList() {
+    const { products, isLoading, fetchProducts } = userProductStore();
+
+    useEffect(() => {
+        fetchProducts(1, 'all');
+    }, [fetchProducts]);
+
+    // Shimmer Loading Component
+    const ShimmerCard = () => (
+        <div className="bg-white rounded-[20px] border border-gray-100 p-[12px] md:p-[16px] shadow-sm flex flex-col gap-[12px] animate-pulse">
+            <div className="w-full h-[150px] sm:h-[170px] md:h-[190px] bg-gray-200 rounded-[16px]"></div>
+            <div className="h-[14px] bg-gray-200 rounded-md w-1/2"></div>
+            <div className="h-[16px] bg-gray-200 rounded-md w-full"></div>
+            <div className="h-[16px] bg-gray-200 rounded-md w-3/4"></div>
+            <div className="flex justify-between items-center mt-[8px]">
+                <div className="h-[20px] bg-gray-200 rounded-md w-1/3"></div>
+                <div className="h-[32px] bg-gray-200 rounded-[12px] w-[80px]"></div>
+            </div>
+        </div>
+    );
 
     return (
         <div className="w-full py-[16px] px-[16px] md:px-[40px] flex flex-col gap-[28px]">
@@ -92,22 +32,29 @@ function ProductList() {
                     </h2>
                 </div>
 
-
-
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[14px] md:gap-[18px]
-                mt-[10px] md:mt-[16px]
-                ">
-                    {productsList1.map((item) => (
-                        <ProductCard key={item.id} {...item} />
-                    ))}
-                </div>
-            </div>
-
-            <div className="max-w-[1440px] mx-auto w-full flex flex-col gap-[14px]">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[14px] md:gap-[18px] mt-[14px] md:mt-[16px]">
-                    {productsList2.map((item) => (
-                        <ProductCard key={item.id} {...item} />
-                    ))}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[14px] md:gap-[18px] mt-[10px] md:mt-[16px]">
+                    {isLoading ? (
+                        Array(8).fill(0).map((_, index) => <ShimmerCard key={index} />)
+                    ) : products.length === 0 ? (
+                        <div className="col-span-full text-center py-10 text-gray-500 font-[600]">
+                            No products found in this category.
+                        </div>
+                    ) : (
+                        products.map((item) => (
+                            <ProductCard
+                                key={item._id}
+                                id={item._id}
+                                category={item.category}
+                                image={item.imageUrl}
+                                vendor={item.vendor?.shopname || item.vendor?.name || 'Unknown Vendor'}
+                                title={item.name}
+                                tag={item.category}
+                                price={`Rs ${Number(item.price).toLocaleString()}`}
+                                description={item.description} 
+                                stock={item.stock} 
+                            />
+                        ))
+                    )}
                 </div>
             </div>
         </div>

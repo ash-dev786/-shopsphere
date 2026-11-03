@@ -1,36 +1,75 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck, Truck, CheckCircle2 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Textfield from '@/components/Textfield';
+import orderStore from '@/store/orderStore';
 
 function Checkout() {
     const navigate = useNavigate();
     const [isOrderPlaced, setIsOrderPlaced] = useState(false);
+    const [cartItems, setCartItems] = useState([]);
+    const [shippingFee, setShippingFee] = useState(250);
+
+    const { placeOrder, isPlacingOrder } = orderStore();
 
     const [formData, setFormData] = useState({
-        fullName: 'Ali Khan',
-        email: 'alikhan@example.com',
-        phone: '+92 300 1234567',
-        address: 'House #123, Street 4, Phase 6, DHA',
-        city: 'Lahore',
+        fullName: '',
+        altPhone: '',
+        phone: '',
+        address: '',
+        city: '',
     });
 
-    const cartItems = [
-        { id: 1, title: 'Wireless Earbuds Pro', price: 4999, quantity: 2 },
-        { id: 2, title: 'Embroidered Lawn Suit 3pc', price: 5450, quantity: 1 },
-        { id: 3, title: 'Peshawari Chappal', price: 2799, quantity: 1 },
-    ];
+    useEffect(() => {
+        const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
+        setCartItems(savedCart);
 
-    const shippingFee = 250;
-    const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+        if (savedCart.length === 0) {
+            navigate('/cart');
+        }
+    }, [navigate]);
+
+    const handleChange = (field) => (e) => {
+        setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+    };
+
+    const getNumericPrice = (price) => {
+        if (typeof price === 'number') return price;
+        return Number(price.toString().replace(/[^0-9]/g, '')) || 0;
+    };
+
+    const subtotal = cartItems.reduce((acc, item) => acc + getNumericPrice(item.price) * item.quantity, 0);
     const total = subtotal + shippingFee;
 
-  
-    const handlePlaceOrder = (e) => {
+    const handlePlaceOrder = async (e) => {
         e.preventDefault();
-        setIsOrderPlaced(true);
+
+        if (cartItems.length === 0) {
+            alert("Your cart is empty");
+            return;
+        }
+
+        const orderPayload = {
+            items: cartItems,
+            shippingAddress: {
+                fullName: formData.fullName,
+                phone: formData.phone,
+                altPhone: formData.altPhone,
+                city: formData.city,
+                address: formData.address
+            }
+        };
+
+        const result = await placeOrder(orderPayload);
+
+        if (result.success) {
+            localStorage.removeItem('cart');
+            setIsOrderPlaced(true);
+        } else {
+            alert(result.message || "Error placing order");
+        }
     };
 
     if (isOrderPlaced) {
@@ -96,40 +135,50 @@ function Checkout() {
                                     <Textfield
                                         label="Full Name"
                                         type="name"
-                                        placeholder="Enter full name"
+                                        placeholder="e.g. Ali Khan"
                                         value={formData.fullName}
-                                    />
-                                </div>
-                                <div className="sm:col-span-1">
-                                    <Textfield
-                                        label="Email Address"
-                                        type="email"
-                                        placeholder="Enter email address"
-                                        value={formData.email}
+                                        onChange={handleChange('fullName')}
+                                        required
                                     />
                                 </div>
                                 <div className="sm:col-span-1">
                                     <Textfield
                                         label="Phone Number"
                                         type="phone"
-                                        placeholder="Enter phone number"
+                                        placeholder="e.g. +92 300 1234567"
                                         value={formData.phone}
+                                        onChange={handleChange('phone')}
+                                        required
+                                    />
+                                </div>
+                                <div className="sm:col-span-1">
+                                    <Textfield
+                                        label="Alternate Phone (optional)"
+                                        type="phone"
+                                        placeholder="Backup number for delivery"
+                                        required={false}
+                                        value={formData.altPhone}
+                                        onChange={handleChange('altPhone')}
                                     />
                                 </div>
                                 <div className="sm:col-span-1">
                                     <Textfield
                                         label="City"
                                         type="city"
-                                        placeholder="Enter city"
+                                        placeholder="e.g. Lahore"
                                         value={formData.city}
+                                        onChange={handleChange('city')}
+                                        required
                                     />
                                 </div>
                                 <div className="sm:col-span-2">
                                     <Textfield
                                         label="Delivery Address"
                                         type="address"
-                                        placeholder="House street, area, city"
+                                        placeholder="House no., street, area"
                                         value={formData.address}
+                                        onChange={handleChange('address')}
+                                        required
                                     />
                                 </div>
                             </div>
@@ -158,7 +207,7 @@ function Checkout() {
                             {cartItems.map((item) => (
                                 <div key={item.id} className="flex justify-between items-center text-[13px]">
                                     <span className="text-gray-600 line-clamp-1 flex-1">{item.title} (x{item.quantity})</span>
-                                    <span className="font-[700] text-gray-900">Rs {(item.price * item.quantity).toLocaleString()}</span>
+                                    <span className="font-[700] text-gray-900">Rs {(getNumericPrice(item.price) * item.quantity).toLocaleString()}</span>
                                 </div>
                             ))}
                         </div>
@@ -183,9 +232,10 @@ function Checkout() {
 
                         <button
                             type="submit"
-                            className="w-full h-[48px] bg-gradient-to-r from-[#413EDC] to-[#3FE1FD] hover:opacity-95 text-white font-[700] text-[14px] md:text-[15px] rounded-[14px] shadow-md shadow-[#413EDC]/20 flex items-center justify-center transition-all cursor-pointer"
+                            disabled={isPlacingOrder}
+                            className="w-full h-[48px] bg-gradient-to-r from-[#413EDC] to-[#3FE1FD] hover:opacity-95 text-white font-[700] text-[14px] md:text-[15px] rounded-[14px] shadow-md shadow-[#413EDC]/20 flex items-center justify-center transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Confirm & Place Order
+                            {isPlacingOrder ? "Placing Order..." : "Confirm & Place Order"}
                         </button>
 
                         <div className="flex items-center justify-center gap-[6px] text-gray-400 text-[11px] font-[500] mt-[4px]">

@@ -1,64 +1,63 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
-// Importing assets for initial mock data
-import pordsImg from '@/assets/images/pords.png';
-import shirtImg from '@/assets/images/shirt.png';
-import watchImg from '@/assets/images/watch.png';
-
 function Cart() {
     const navigate = useNavigate();
+    const [cartItems, setCartItems] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const [cartItems, setCartItems] = useState([
-        {
-            id: 1,
-            title: 'Wireless Earbuds Pro',
-            vendor: 'TechHub Lahore',
-            price: 4999,
-            quantity: 2,
-            image: pordsImg,
-        },
-        {
-            id: 2,
-            title: 'Embroidered Lawn Suit 3pc',
-            vendor: 'Khaadi Corner',
-            price: 5450,
-            quantity: 1,
-            image: shirtImg,
-        },
-        {
-            id: 3,
-            title: 'Peshawari Chappal',
-            vendor: 'Khaadi Corner',
-            price: 2799,
-            quantity: 1,
-            image: watchImg,
-        },
-    ]);
+    useEffect(() => {
+        const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
+        setCartItems(savedCart);
+        setIsLoading(false);
+    }, []);
 
     const shippingFee = 250;
 
     const handleQuantityChange = (id, type) => {
-        setCartItems(prev =>
-            prev.map(item => {
+        setCartItems(prev => {
+            const updatedCart = prev.map(item => {
                 if (item.id === id) {
                     const newQty = type === 'inc' ? item.quantity + 1 : item.quantity - 1;
                     return { ...item, quantity: newQty > 0 ? newQty : 1 };
                 }
                 return item;
-            })
-        );
+            });
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+            return updatedCart;
+        });
     };
 
     const handleRemoveItem = (id) => {
-        setCartItems(prev => prev.filter(item => item.id !== id));
+        setCartItems(prev => {
+            const updatedCart = prev.filter(item => item.id !== id);
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+            return updatedCart;
+        });
     };
 
-    const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const getNumericPrice = (price) => {
+        if (typeof price === 'number') return price;
+        return Number(price.toString().replace(/[^0-9]/g, '')) || 0;
+    };
+
+    const subtotal = cartItems.reduce((acc, item) => acc + getNumericPrice(item.price) * item.quantity, 0);
     const total = cartItems.length > 0 ? subtotal + shippingFee : 0;
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col w-full min-h-screen bg-gray-50">
+                <Header />
+                <div className="flex-1 flex items-center justify-center">
+                    <span className="text-[15px] font-[600] text-gray-500">Loading cart...</span>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col w-full min-h-screen bg-gray-50">
@@ -98,7 +97,6 @@ function Cart() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-[24px] items-start">
-                        {/* Left: Cart Items List */}
                         <div className="lg:col-span-2 flex flex-col gap-[16px]">
                             {cartItems.map((item) => (
                                 <div
@@ -121,7 +119,7 @@ function Cart() {
                                                 {item.vendor}
                                             </span>
                                             <span className="text-[14px] md:text-[15px] font-[800] text-[#413EDC] mt-[4px]">
-                                                Rs {item.price.toLocaleString()}
+                                                Rs {getNumericPrice(item.price).toLocaleString()}
                                             </span>
                                         </div>
                                     </div>
@@ -156,7 +154,6 @@ function Cart() {
                             ))}
                         </div>
 
-                        {/* Right: Order Summary */}
                         <div className="bg-white rounded-[24px] border border-gray-100 p-[20px] md:p-[24px] shadow-sm flex flex-col gap-[20px] sticky top-[24px]">
                             <h3 className="text-[18px] font-[800] text-gray-900">
                                 Order Summary
