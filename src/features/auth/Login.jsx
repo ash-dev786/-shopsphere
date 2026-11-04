@@ -99,7 +99,7 @@ function Login() {
                             </label>
                         </div>
 
-                        <div className="h-[10px] md:h-[14px] w-full"></div>
+                        <div className="h-[0px] md:h-[0px] w-full"></div>
 
                         <Button text={"Login"} type="submit" />
                     </form>

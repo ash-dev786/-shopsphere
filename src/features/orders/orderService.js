@@ -25,3 +25,11 @@ export const fetchCustomerNotificationsApi = async () => {
     });
     return await response.json();
 };
+
+export const markOrdersReadApi = async () => {
+    const response = await fetch(`${API_URL}/mark-read`, {
+        method: "PUT",
+        credentials: "include",
+    });
+    return await response.json();
+};

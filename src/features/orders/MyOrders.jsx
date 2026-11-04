@@ -7,12 +7,12 @@ import orderStore from '@/store/orderStore';
 
 function MyOrders() {
     const navigate = useNavigate();
-    const { myOrders, getMyOrders, isLoadingOrders, clearCustomerNotifications } = orderStore();
+     const { myOrders, getMyOrders, isLoadingOrders, markOrdersAsRead } = orderStore();
 
-   useEffect(() => {
-    getMyOrders();
-    clearCustomerNotifications(); 
-}, [getMyOrders, clearCustomerNotifications]);
+     useEffect(() => {
+        getMyOrders();
+        markOrdersAsRead(); 
+    }, [getMyOrders, markOrdersAsRead]);
 
     const getStatusStyle = (status) => {
         if (status === 'Completed') return 'bg-emerald-50 text-emerald-600 border-emerald-100';

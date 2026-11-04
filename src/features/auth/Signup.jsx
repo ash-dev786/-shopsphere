@@ -186,9 +186,9 @@ function Signup() {
 
                         {accountType === 'vendor' && (
                             <Textfield
-                                label="Shop Name"
+                                label="Shop Name & city"
                                 type="shopname"
-                                placeholder="shop name"
+                                placeholder="shop name , city"
                                 value={shopname}
                                 onChange={(e) => setShopname(e.target.value)}
                             />

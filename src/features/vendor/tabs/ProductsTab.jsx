@@ -25,8 +25,14 @@ function ProductsTab() {
         getVendorProducts();
     }, [getVendorProducts]);
 
-    const handleChange = (e, field) => {
-        setFormData({ ...formData, [field]: e.target.value });
+       const handleChange = (e, field) => {
+        let value = e.target.value;
+    
+        if (field === 'price' || field === 'stock') {
+            value = value.replace(/,/g, '');
+        }
+
+        setFormData({ ...formData, [field]: value });
     };
 
     const handleImageChange = (e) => {

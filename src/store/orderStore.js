@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import { createOrderApi, fetchMyOrdersApi, fetchCustomerNotificationsApi } from '@/features/orders/orderService';
-
+import { createOrderApi, fetchMyOrdersApi, fetchCustomerNotificationsApi, markOrdersReadApi } from '@/features/orders/orderService';
 const orderStore = create((set) => ({
     isPlacingOrder: false,
     myOrders: [],
@@ -47,6 +46,15 @@ const orderStore = create((set) => ({
             }
         } catch (error) {
             console.error("Error fetching customer notifications:", error);
+        }
+    },
+
+    markOrdersAsRead: async () => {
+        try {
+            await markOrdersReadApi();
+            set({ customerNotificationCount: 0 }); 
+        } catch (error) {
+            console.error("Error marking orders as read");
         }
     },
 
