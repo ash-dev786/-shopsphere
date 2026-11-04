@@ -1,19 +1,57 @@
-import { useState } from 'react';
-import { Store, Save, ShieldCheck, Bell, MapPin, Phone, User } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Store, Save, ShieldCheck, Bell } from 'lucide-react';
 import Textfield from '@/components/Textfield';
+import userAuthStore from '@/store/authStore';
 
 function SettingsTab() {
+    const { user, getProfile, updateProfile } = userAuthStore();
     const [savedMessage, setSavedMessage] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
-    const handleSaveSettings = (e) => {
+    const [formData, setFormData] = useState({
+        shopname: '',
+        name: '',
+        phone: '',
+        city: '',
+        address: ''
+    });
+
+    useEffect(() => {
+        getProfile();
+    }, [getProfile]);
+
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                shopname: user.shopname || '',
+                name: user.name || '',
+                phone: user.phone || '',
+                city: user.city || '',
+                address: user.address || ''
+            });
+        }
+    }, [user]);
+
+    const handleChange = (e, field) => {
+        setFormData({ ...formData, [field]: e.target.value });
+    };
+
+    const handleSaveSettings = async (e) => {
         e.preventDefault();
-        setSavedMessage(true);
-        setTimeout(() => setSavedMessage(false), 3000);
+        setIsSaving(true);
+        const result = await updateProfile(formData);
+
+        if (result.success) {
+            setSavedMessage(true);
+            setTimeout(() => setSavedMessage(false), 3000);
+        } else {
+            alert(result.message);
+        }
+        setIsSaving(false);
     };
 
     return (
         <div className="flex flex-col gap-[20px] w-full max-w-full">
-            {/* Header */}
             <div className="flex flex-col gap-[4px]">
                 <h1 className="text-[22px] md:text-[26px] font-[800] text-gray-900 tracking-tight">
                     Store Settings
@@ -31,7 +69,6 @@ function SettingsTab() {
             )}
 
             <form onSubmit={handleSaveSettings} className="flex flex-col gap-[20px] w-full">
-                {/* Store Profile Section */}
                 <div className="bg-white rounded-[20px] border border-gray-100 p-[20px] md:p-[24px] shadow-sm flex flex-col gap-[16px]">
                     <h3 className="text-[16px] font-[800] text-gray-900 border-b border-gray-100 pb-[12px] flex items-center gap-[8px]">
                         <Store size={18} className="text-[#413EDC]" />
@@ -39,44 +76,58 @@ function SettingsTab() {
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
-                        <Textfield
-                            label="Store / Business Name"
-                            type="shopname"
-                            placeholder="ShopSphere Official"
-                            value="ShopSphere Official"
-                        />
-                        <Textfield
-                            label="Vendor Owner Name"
-                            type="name"
-                            placeholder="Muhammad Ali"
-                            value="Muhammad Ali"
-                        />
+                        <div onChange={(e) => handleChange(e, 'shopname')}>
+                            <Textfield
+                                label="Store / Business Name"
+                                type="shopname"
+                                placeholder="Enter store name"
+                                value={formData.shopname}
+                                required
+                            />
+                        </div>
+                        <div onChange={(e) => handleChange(e, 'name')}>
+                            <Textfield
+                                label="Vendor Owner Name"
+                                type="name"
+                                placeholder="Enter your name"
+                                value={formData.name}
+                                required
+                            />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
-                        <Textfield
-                            label="Phone Number"
-                            type="phone"
-                            placeholder="+92 300 1234567"
-                            value="+92 300 1234567"
-                        />
-                        <Textfield
-                            label="City"
-                            type="city"
-                            placeholder="Lahore"
-                            value="Lahore"
-                        />
+                        <div onChange={(e) => handleChange(e, 'phone')}>
+                            <Textfield
+                                label="Phone Number"
+                                type="phone"
+                                placeholder="Enter phone number"
+                                value={formData.phone}
+                                required
+                            />
+                        </div>
+                        <div onChange={(e) => handleChange(e, 'city')}>
+                            <Textfield
+                                label="City"
+                                type="city"
+                                placeholder="Enter city"
+                                value={formData.city}
+                                required
+                            />
+                        </div>
                     </div>
 
-                    <Textfield
-                        label="Store Business Address"
-                        type="address"
-                        placeholder="Shop #12, Main Market, Gulberg, Lahore"
-                        value="Shop #12, Main Market, Gulberg, Lahore"
-                    />
+                    <div onChange={(e) => handleChange(e, 'address')}>
+                        <Textfield
+                            label="Store Business Address"
+                            type="address"
+                            placeholder="Enter business address"
+                            value={formData.address}
+                            required
+                        />
+                    </div>
                 </div>
 
-                {/* Notification Preferences */}
                 <div className="bg-white rounded-[20px] border border-gray-100 p-[20px] md:p-[24px] shadow-sm flex flex-col gap-[16px]">
                     <h3 className="text-[16px] font-[800] text-gray-900 border-b border-gray-100 pb-[12px] flex items-center gap-[8px]">
                         <Bell size={18} className="text-[#413EDC]" />
@@ -99,14 +150,14 @@ function SettingsTab() {
                     </div>
                 </div>
 
-                {/* Save Button */}
                 <div className="flex items-center justify-end gap-[12px]">
                     <button
                         type="submit"
-                        className="flex items-center gap-[8px] bg-[#413EDC] hover:bg-[#3633b8] text-white px-[22px] py-[12px] rounded-[14px] text-[13px] md:text-[14px] font-[700] shadow-md shadow-[#413EDC]/20 cursor-pointer transition-all"
+                        disabled={isSaving}
+                        className="flex items-center gap-[8px] bg-[#413EDC] hover:bg-[#3633b8] text-white px-[22px] py-[12px] rounded-[14px] text-[13px] md:text-[14px] font-[700] shadow-md shadow-[#413EDC]/20 cursor-pointer transition-all disabled:opacity-50"
                     >
                         <Save size={18} />
-                        <span>Save Changes</span>
+                        <span>{isSaving ? "Saving..." : "Save Changes"}</span>
                     </button>
                 </div>
             </form>

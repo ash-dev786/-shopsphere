@@ -3,18 +3,29 @@ import { Search, ShoppingCart } from 'lucide-react';
 import logo from '../assets/logos/logo.png';
 import { useNavigate } from 'react-router-dom';
 import userProductStore from '@/store/userProductStore';
+import orderStore from '@/store/orderStore';
 
 function Header() {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const { fetchProducts } = userProductStore();
-   
-        useEffect(() => {
+    const { customerNotificationCount, getCustomerNotifications } = orderStore();
+
+    useEffect(() => {
         if (searchTerm === '') {
             fetchProducts(1, 'all', '');
         }
     }, [searchTerm, fetchProducts]);
 
+    useEffect(() => {
+        getCustomerNotifications();
+
+        const interval = setInterval(() => {
+            getCustomerNotifications();
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [getCustomerNotifications]);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -60,9 +71,16 @@ function Header() {
                 <div className="flex items-center gap-[12px] shrink-0">
                     <div 
                         onClick={() => navigate('/myorders')}
-                        className="flex items-center justify-center h-[38px] w-[38px] md:h-[42px] md:w-[42px] rounded-full bg-transparent border-2 border-[#413EDC]/30 text-[#413EDC] shadow-sm cursor-pointer hover:border-[#413EDC] hover:bg-[#EEF2FF]/50 transition-all"
+                        className="relative flex items-center justify-center h-[38px] w-[38px] md:h-[42px] md:w-[42px] rounded-full bg-transparent border-2 border-[#413EDC]/30 text-[#413EDC] shadow-sm cursor-pointer hover:border-[#413EDC] hover:bg-[#EEF2FF]/50 transition-all"
                     >
                         <ShoppingCart size={18} />
+                        
+                        {/* Notification Count Badge */}
+                        {customerNotificationCount > 0 && (
+                            <span className="absolute -top-[4px] -right-[4px] bg-red-500 text-white text-[10px] font-[800] w-[18px] h-[18px] rounded-full flex items-center justify-center shadow-xs border-2 border-white">
+                                {customerNotificationCount}
+                            </span>
+                        )}
                     </div>
                 </div>
             </div>

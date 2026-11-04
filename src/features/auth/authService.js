@@ -19,3 +19,29 @@ export const signupApi = async (data) => {
     });
     return await response.json();
 };
+
+export const logoutApi = async () => {
+    const response = await fetch(`${API_URL}/logout`, {
+        method: "POST",
+        credentials: "include",
+    });
+    return await response.json();
+};
+
+export const getProfileApi = async () => {
+    const response = await fetch(`${API_URL}/profile`, {
+        method: "GET",
+        credentials: "include",
+    });
+    return await response.json();
+};
+
+export const updateProfileApi = async (userData) => {
+    const response = await fetch(`${API_URL}/update-profile`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+        credentials: "include",
+    });
+    return await response.json();
+};

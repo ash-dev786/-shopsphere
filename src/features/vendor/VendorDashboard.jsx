@@ -1,13 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import VendorHeader from '@/features/vendor/VendorHeader';
 import VendorSidebar from '@/features/vendor/VendorSidebar';
 import DashboardOverview from './tabs/DashboardOverview';
 import ProductsTab from './tabs/ProductsTab';
 import OrdersTab from './tabs/OrdersTab';
 import SettingsTab from './tabs/SettingsTab';
+import vendorOrderStore from '@/store/vendorOrderStore';
 
 function VendorDashboard() {
     const [activeTab, setActiveTab] = useState('dashboard');
+    const markAllAsRead = vendorOrderStore((state) => state.markAllAsRead);
+
+    useEffect(() => {
+        if (activeTab === 'orders') {
+            markAllAsRead();
+        }
+    }, [activeTab, markAllAsRead]);
 
     return (
         <div className="flex flex-col w-full min-h-screen bg-gray-50">

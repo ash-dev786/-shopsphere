@@ -1,6 +1,9 @@
 import { LayoutDashboard, Package, ShoppingCart, Settings } from 'lucide-react';
+import vendorOrderStore from '@/store/vendorOrderStore';
 
 function VendorSidebar({ activeTab, setActiveTab }) {
+    const unreadCount = vendorOrderStore((state) => state.unreadCount);
+
     const navItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'products', label: 'Products', icon: Package },
@@ -20,14 +23,20 @@ function VendorSidebar({ activeTab, setActiveTab }) {
                             <button
                                 key={item.id}
                                 onClick={() => setActiveTab(item.id)}
-                                className={`flex items-center gap-[12px] px-[16px] py-[12px] rounded-[14px] text-[13px] md:text-[14px] font-[600] transition-all duration-200 whitespace-nowrap cursor-pointer w-full text-left ${
-                                    isActive
+                                className={`flex items-center justify-between px-[16px] py-[12px] rounded-[14px] text-[13px] md:text-[14px] font-[600] transition-all duration-200 whitespace-nowrap cursor-pointer w-full text-left ${isActive
                                         ? 'bg-[#413EDC] text-white shadow-md shadow-[#413EDC]/20'
                                         : 'text-gray-600 hover:bg-[#EEF2FF] hover:text-[#413EDC]'
-                                }`}
+                                    }`}
                             >
-                                <Icon size={18} className="shrink-0" />
-                                <span>{item.label}</span>
+                                <div className="flex items-center gap-[12px]">
+                                    <Icon size={18} className="shrink-0" />
+                                    <span>{item.label}</span>
+                                </div>
+                                {item.id === 'orders' && unreadCount > 0 && !isActive && (
+                                    <span className="bg-red-500 text-white text-[10px] font-[800] px-[8px] py-[2px] rounded-full">
+                                        {unreadCount}
+                                    </span>
+                                )}
                             </button>
                         );
                     })}

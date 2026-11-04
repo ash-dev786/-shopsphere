@@ -9,3 +9,19 @@ export const createOrderApi = async (orderData) => {
     });
     return await response.json();
 };
+
+export const fetchMyOrdersApi = async () => {
+    const response = await fetch(`${API_URL}/myorders`, {
+        method: "GET",
+        credentials: "include",
+    });
+    return await response.json();
+};
+
+export const fetchCustomerNotificationsApi = async () => {
+    const response = await fetch(`${API_URL}/customer-notifications`, {
+        method: "GET",
+        credentials: "include",
+    });
+    return await response.json();
+};
