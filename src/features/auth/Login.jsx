@@ -12,13 +12,21 @@ function Login() {
     const [password, setPassword] = useState('');
     const loginUser = userAuthStore((state) => state.loginUser);
 
-    const handleLogin = async (e) => {
+        const handleLogin = async (e) => {
         e.preventDefault();
 
         if (!email || !password) {
             return alert("Please enter email and password");
         }
 
+        // Admin Hardcoded Check
+        if (email === "admin@shopsphere.com" && password === "Admin@786") {
+            alert("Admin Login Successful!");
+            navigate('/admindashboard');
+            return; 
+        }
+
+        // Normal User/Vendor Login
         const result = await loginUser(email, password);
 
         if (result.success) {
