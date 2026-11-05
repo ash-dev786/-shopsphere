@@ -1,5 +1,5 @@
-const API_URL = "http://localhost:5000/api/orders";
-const ADMIN_URL = "http://localhost:5000/api/admin";
+const API_URL = "https://shopsphere-backend-nh3g.onrender.com/api/orders";
+const ADMIN_URL = "https://shopsphere-backend-nh3g.onrender.com/api/admin";
 
 export const fetchAdminStatsApi = async () => {
     const response = await fetch(`${ADMIN_URL}/admin-stats`, {

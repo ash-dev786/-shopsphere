@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api/orders";
+const API_URL = "https://shopsphere-backend-nh3g.onrender.com/api/orders";
 
 export const fetchVendorOrdersApi = async () => {
     const response = await fetch(`${API_URL}/vendor`, {
