@@ -1,10 +1,15 @@
 import { LayoutDashboard, Users, Percent, Settings } from 'lucide-react';
-
+import adminStore from '@/store/adminStore';
 function AdminSidebar({ activeTab, setActiveTab }) {
+
+    const { settingsData } = adminStore();
+    const currentRate = settingsData?.commissionRate || 5;
+
+
     const navItems = [
         { id: 'overview', label: 'Overview', icon: LayoutDashboard },
         { id: 'vendors', label: 'Vendors', icon: Users },
-        { id: 'commissions', label: 'Commissions', icon: Percent },
+        { id: 'commissions', label: `${currentRate}% Commissions`, icon: Percent },
         { id: 'settings', label: 'Settings', icon: Settings },
     ];
 
@@ -25,11 +30,10 @@ function AdminSidebar({ activeTab, setActiveTab }) {
                                         setActiveTab(item.id);
                                     }
                                 }}
-                                className={`flex items-center gap-[12px] px-[16px] py-[12px] rounded-[14px] text-[13px] md:text-[14px] font-[600] transition-all duration-200 whitespace-nowrap cursor-pointer w-full text-left ${
-                                    isActive
+                                className={`flex items-center gap-[12px] px-[16px] py-[12px] rounded-[14px] text-[13px] md:text-[14px] font-[600] transition-all duration-200 whitespace-nowrap cursor-pointer w-full text-left ${isActive
                                         ? 'bg-[#413EDC] text-white shadow-md shadow-[#413EDC]/20'
                                         : 'text-gray-600 hover:bg-[#EEF2FF] hover:text-[#413EDC]'
-                                }`}
+                                    }`}
                             >
                                 <Icon size={18} className="shrink-0" />
                                 <span>{item.label}</span>

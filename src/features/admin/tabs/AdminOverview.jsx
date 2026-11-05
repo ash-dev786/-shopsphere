@@ -1,19 +1,22 @@
 import { useEffect } from 'react';
-import { TrendingUp, Users, DollarSign, Percent, ArrowUpRight } from 'lucide-react';
+import {  DollarSign, Percent, Users, TrendingUp, ArrowUpRight } from 'lucide-react';
 import adminStore from '@/store/adminStore';
 
 function AdminOverview() {
-    const { stats, getAdminStats, isLoading } = adminStore();
+    const { stats, getAdminStats, isLoading, settingsData, getSettings } = adminStore();
 
     useEffect(() => {
         getAdminStats();
-    }, [getAdminStats]);
+        getSettings();
+    }, [getAdminStats, getSettings]);
+
+    const currentRate = settingsData?.commissionRate || 5;
 
     const statCards = [
         { title: 'Total Platform Revenue', value: `Rs ${stats?.totalRevenue?.toLocaleString() || 0}`, change: '+Real-time', icon: DollarSign },
-        { title: '5% Commission Earned', value: `Rs ${stats?.totalCommission?.toLocaleString() || 0}`, change: '+Real-time', icon: Percent },
+        { title: `${currentRate}% Commission Earned`, value: `Rs ${stats?.totalCommission?.toLocaleString() || 0}`, change: '+Real-time', icon: Percent },
         { title: 'Active Vendors', value: stats?.activeVendors || 0, change: 'Total', icon: Users },
-        { title: 'Platform Growth', value: '32.4%', change: '+5.1%', icon: TrendingUp }, 
+        { title: 'Platform Growth', value: '32.4%', change: '+5.1%', icon: TrendingUp },
     ];
 
     return (
@@ -23,7 +26,7 @@ function AdminOverview() {
                     Admin Overview
                 </h1>
                 <span className="text-[13px] md:text-[14px] font-[600] text-gray-500">
-                    Welcome back, Admin. Here is the real-time summary of platform revenue and 5% commissions.
+                    Welcome back, Admin. Here is the real-time summary of platform revenue and {currentRate}% commissions.
                 </span>
             </div>
 
@@ -57,7 +60,7 @@ function AdminOverview() {
             <div className="bg-white rounded-[24px] border border-gray-100 p-[20px] md:p-[24px] shadow-sm flex flex-col gap-[16px] w-full overflow-hidden">
                 <div className="flex items-center justify-between">
                     <h3 className="text-[17px] md:text-[18px] font-[800] text-gray-900">
-                        Recent 5% Commission Deductions
+                        Recent {currentRate}% Commission Deductions
                     </h3>
                 </div>
 
@@ -69,7 +72,7 @@ function AdminOverview() {
                                 <th className="pb-[10px]">Vendor Name</th>
                                 <th className="pb-[10px]">Order Ref</th>
                                 <th className="pb-[10px]">Sale Amount</th>
-                                <th className="pb-[10px] text-right">5% Commission</th>
+                                <th className="pb-[10px] text-right">{currentRate}% Commission</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 text-[13px]">

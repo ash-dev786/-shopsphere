@@ -13,7 +13,7 @@ function CommissionsTab() {
         <div className="flex flex-col gap-[20px] w-full max-w-full">
             <div className="flex flex-col gap-[4px]">
                 <h1 className="text-[22px] md:text-[26px] font-[800] text-gray-900 tracking-tight">
-                   Commission Management
+                    {settingsData?.commissionRate || 5}% Commission Management
                 </h1>
                 <span className="text-[13px] font-[600] text-gray-500">
                     Track automated commission deductions from every vendor sale across the platform.

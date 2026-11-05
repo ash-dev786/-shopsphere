@@ -87,7 +87,7 @@ function DashboardOverview() {
                                             </div>
                                             <span className="truncate max-w-[160px] sm:max-w-[220px]">{item.name}</span>
                                         </td>
-                                        <td className="py-[14px] text-gray-600 font-[500]">Category</td>
+                                        <td className="py-[14px] text-gray-600 font-[500]">{item.category || 'N/A'}</td>
                                         <td className="py-[14px] font-[600] text-gray-800">{item.totalQuantity} units</td>
                                         <td className="py-[14px] font-[800] text-[#413EDC]">Rs {item.totalRevenue?.toLocaleString()}</td>
                                         <td className="py-[14px] text-right font-[700] text-amber-600 flex items-center justify-end gap-[4px]">
